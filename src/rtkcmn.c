@@ -103,7 +103,7 @@
 *           2014/10/21 1.29 strtok() -> strtok_r() in expath() for thread-safe
 *                           add bdsmodear in procopt_default
 *-----------------------------------------------------------------------------*/
-#define _POSIX_C_SOURCE 199309
+#define _POSIX_C_SOURCE 199506
 #include <stdarg.h>
 #include <ctype.h>
 #ifndef WIN32
@@ -1528,11 +1528,11 @@ extern unsigned int tickget(void)
 #ifdef WIN32
     return (unsigned int)timeGetTime();
 #else
-    struct timespec tp={0};
     struct timeval  tv={0};
     
 #ifdef CLOCK_MONOTONIC_RAW
     /* linux kernel > 2.6.28 */
+    struct timespec tp={0};
     if (!clock_gettime(CLOCK_MONOTONIC_RAW,&tp)) {
         return tp.tv_sec*1000u+tp.tv_nsec/1000000u;
     }
