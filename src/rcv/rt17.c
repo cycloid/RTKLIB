@@ -261,13 +261,13 @@
 | Constant definitions:
 */
 
-#define STX           2    /* Start of packet character */
-#define ETX           3    /* End of packet character */
-#define GENOUT        0x40 /* General Serial Output Format (GSOF) */
-#define RETSVDATA     0x55 /* Satellite information reports */
-#define RAWDATA       0x57 /* Position or real-time survey data report */
-#define BIG_ENDIAN    1    /* Big-endian platform or data stream */
-#define LITTLE_ENDIAN 2    /* Little-endian platform or data stream */
+#define STX                2    /* Start of packet character */
+#define ETX                3    /* End of packet character */
+#define GENOUT             0x40 /* General Serial Output Format (GSOF) */
+#define RETSVDATA          0x55 /* Satellite information reports */
+#define RAWDATA            0x57 /* Position or real-time survey data report */
+#define RT17_BIG_ENDIAN    1    /* Big-endian platform or data stream */
+#define RT17_LITTLE_ENDIAN 2    /* Little-endian platform or data stream */
 
 /*
 | Record Interpretation Flags bit masks:
@@ -477,7 +477,7 @@ extern int input_rt17(raw_t *raw, unsigned char data)
     if (raw->pbuff[2] == RETSVDATA)
     {
         status = decode_retsvdata( raw, strstr(raw->opt,"-LE") ?
-                                        LITTLE_ENDIAN : BIG_ENDIAN );
+                                        RT17_LITTLE_ENDIAN : RT17_BIG_ENDIAN );
         clear_packet_buffer(raw);
         return (status);
     }
@@ -540,7 +540,7 @@ extern int input_rt17(raw_t *raw, unsigned char data)
         if (page == pages)
         {
             status = decode_rawdata( raw, strstr(raw->opt,"-LE") ?
-                                          LITTLE_ENDIAN : BIG_ENDIAN );
+                                          RT17_LITTLE_ENDIAN : RT17_BIG_ENDIAN );
             clear_message_buffer(raw);
             return (status);
         }
@@ -608,7 +608,7 @@ extern int input_rt17(raw_t *raw, unsigned char data)
         if (page == pages)
         {
             decode_genout( raw, strstr(raw->opt,"-LE") ?
-                                    LITTLE_ENDIAN : BIG_ENDIAN );
+                                    RT17_LITTLE_ENDIAN : RT17_BIG_ENDIAN );
             clear_message_buffer(raw);
             return (0);
         }
@@ -2022,7 +2022,7 @@ static short read_i2(unsigned char *p, int endian)
     memcpy(&u.i2, p, sizeof(u.i2));
 
     et.u2 = 0; et.c[0] = 1;  
-    if ((et.u2 == 1) && (endian != LITTLE_ENDIAN))
+    if ((et.u2 == 1) && (endian != RT17_LITTLE_ENDIAN))
     {
         unsigned char t;
         t = u.c[0]; u.c[0] = u.c[1]; u.c[1] = t;
@@ -2066,7 +2066,7 @@ static int read_i4(unsigned char *p, int endian)
     memcpy(&u.i4, p, sizeof(u.i4));
 
     et.u2 = 0; et.c[0] = 1;  
-    if ((et.u2 == 1) && (endian != LITTLE_ENDIAN))
+    if ((et.u2 == 1) && (endian != RT17_LITTLE_ENDIAN))
     {
         unsigned char t;
         t = u.c[0]; u.c[0] = u.c[3]; u.c[3] = t;
@@ -2146,7 +2146,7 @@ static double read_r8(unsigned char *p, int endian)
     memcpy(&u.d, p, sizeof(u.d));
  
     et.u2 = 0; et.c[0] = 1;  
-    if ((et.u2 == 1) && (endian != LITTLE_ENDIAN))
+    if ((et.u2 == 1) && (endian != RT17_LITTLE_ENDIAN))
     {
         unsigned char t;
         t = u.c[0]; u.c[0] = u.c[7]; u.c[7] = t;
@@ -2193,7 +2193,7 @@ static unsigned short read_u2(unsigned char *p, int endian)
     memcpy(&u.u2, p, sizeof(u.u2)); 
  
     et.u2 = 0; et.c[0] = 1;  
-    if ((et.u2 == 1) && (endian != LITTLE_ENDIAN))
+    if ((et.u2 == 1) && (endian != RT17_LITTLE_ENDIAN))
     {
         unsigned char t;
         t = u.c[0]; u.c[0] = u.c[1]; u.c[1] = t;
@@ -2237,7 +2237,7 @@ static unsigned int read_u4(unsigned char *p, int endian)
     memcpy(&u.u4, p, sizeof(u.u4));
  
     et.u2 = 0; et.c[0] = 1;  
-    if ((et.u2 == 1) && (endian != LITTLE_ENDIAN))
+    if ((et.u2 == 1) && (endian != RT17_LITTLE_ENDIAN))
     {
         unsigned char t;
         t = u.c[0]; u.c[0] = u.c[3]; u.c[3] = t;
