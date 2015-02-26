@@ -9,9 +9,18 @@ SRC    = ../../../src
 INCLUDE= -I$(SRC)
 OPTIONS= -DTRACE -DENAGLO -DENAQZS -DENAGAL -DENACMP -DNFREQ=6 -DNEXOBS=3
 
-CFLAGS = -O3 -ansi -pedantic -Wall -Wno-unused-but-set-variable $(INCLUDE) $(OPTIONS) -g
+CFLAGS = -O3 -ansi -pedantic -Wall $(INCLUDE) $(OPTIONS) -g
 
-LDLIBS = -lm -lrt
+# Set OS-specific compile and link options
+
+OS := $(shell uname -s)
+ifeq (Darwin, $(findstring Darwin,$(OS)))
+  # echo "Building for Darwin/MacOS"
+  LDLIBS = 
+else ifeq (Linux, $(findstring Linux,$(OS)))
+  # echo "Building for Linux"
+  LDLIBS = -lm -lrt
+endif
 
 all  : convbin
 

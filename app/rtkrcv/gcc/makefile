@@ -5,10 +5,17 @@ SRC    = ../../../src
 
 # for beagleboard
 #CTARGET= -mfpu=neon -mfloat-abi=softfp -ffast-math
+
 CTARGET= -DENAGLO -DENAGAL -DENAQZS -DNFREQ=3
 
-CFLAGS = -Wall -O3 -ansi -pedantic -Wno-unused-but-set-variable -I$(SRC) -DTRACE $(CTARGET) -g
-LDLIBS  = -lm -lrt -lpthread
+CFLAGS = -Wall -O3 -ansi -pedantic -I$(SRC) -DTRACE $(CTARGET) -g
+
+OS := $(shell uname -s)
+ifeq (Darwin, $(findstring Darwin,$(OS)))
+  LDLIBS = 
+else ifeq (Linux, $(findstring Linux,$(OS)))
+  LDLIBS  = -lm -lrt -lpthread
+endif
 
 all        : rtkrcv
 rtkrcv     : rtkrcv.o rtkcmn.o rtksvr.o rtkpos.o geoid.o solution.o lambda.o

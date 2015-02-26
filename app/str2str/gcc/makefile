@@ -8,8 +8,18 @@ SRC    = ../../../src
 CTARGET=
 
 OPTION = -DENAGLO -DENAGAL -DENAQZS -DENACMP -DTRACE -DNFREQ=3 -DNEXOBS=3
-CFLAGS = -Wall -O3 -ansi -pedantic -Wno-unused-but-set-variable -I$(SRC) $(OPTION) $(CTARGET) -g
-LDLIBS  = -lm -lrt -lpthread
+CFLAGS = -Wall -O3 -ansi -pedantic -I$(SRC) $(OPTION) $(CTARGET) -g
+
+# Set OS-specific compile and link options
+
+OS := $(shell uname -s)
+ifeq (Darwin, $(findstring Darwin,$(OS)))
+  # echo "Building for Darwin"
+  LDLIBS = 
+else ifeq (Linux, $(findstring Linux,$(OS)))
+  # echo "Building for Linux"
+  LDLIBS = -lm -lrt -lpthread
+endif
 
 all        : str2str
 str2str    : str2str.o stream.o rtkcmn.o solution.o sbas.o geoid.o

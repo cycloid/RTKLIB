@@ -5,23 +5,32 @@ SRC     = ../../../src
 
 OPTS    = -DTRACE -DENAGLO -DENAQZS -DENAGAL -DNFREQ=3
 
-# for no lapack
-CFLAGS  = -Wall -O3 -ansi -pedantic -Wno-unused-but-set-variable -I$(SRC) $(OPTS) -g
-LDLIBS  = -lm -lrt
+MKLDIR  = /opt/intel/mkl
+LINALG  = -DLAPACK   # Use: -DMKL for MKL; blank for builtin linear algebra routines
+CFLAGS  = -Wall -O3 -ansi -pedantic -I$(SRC) $(OPTS) $(LINALG)
 
-#CFLAGS  = -Wall -O3 -ansi -pedantic -Wno-unused-but-set-variable -I$(SRC) -DLAPACK $(OPTS)
-#LDLIBS  = -lm -lrt -llapack -lblas
-
-# for gprof
-#CFLAGS  = -Wall -O3 -ansi -pedantic -Wno-unused-but-set-variable -I$(SRC) -DLAPACK $(OPTS) -pg
-#LDLIBS  = -lm -lrt -llapack -lblas -pg
-
-# for mkl
-#MKLDIR  = /opt/intel/mkl
-#CFLAGS  = -O3 -ansi -pedantic -Wno-unused-but-set-variable -I$(SRC) $(OPTS) -DMKL
-#LDLIBS  = -L$(MKLDIR)/lib/intel64 -lm -lrt -lmkl_core -lmkl_intel_lp64 -lmkl_gnu_thread -liomp5 -lpthread
+# Choose the correct LDLIBS given our OS and math library 
+OS := $(shell uname -s)
+ifeq (Darwin, $(findstring Darwin,$(OS)))
+  ifeq (-DLAPACK, $(strip $(LINALG)))   # MacOS X with Accelerate.framework LAPACK and BLAS
+    CC     = clang
+    LDLIBS = -framework Accelerate
+  else  # MacOS X with RTKLIB linear algebra routines
+    LDLIBS =
+  endif
+else ifeq (Linux, $(findstring Linux,$(OS)))
+  ifeq (-DLAPACK, $(strip $(LINALG)))  # Linux with LAPACK
+    LDLIBS = -lm -lrt -lpthread -llapack -lblas
+  else ifeq (-DMKL, $(strip $(LINALG)))
+    # Linux with MKL
+    LDLIBS = -L$(MKLDIR)/lib/intel64 -lm -lrt -lmkl_core -lmkl_intel_lp64 -lmkl_gnu_thread -liomp5 -lpthread
+  else
+    LDLIBS = -lm -lrt    # Linux with RTKLIB linear algebra routines
+  endif
+endif
 
 all        : rnx2rtkp
+
 rnx2rtkp   : rnx2rtkp.o rtkcmn.o rinex.o rtkpos.o postpos.o solution.o
 rnx2rtkp   : lambda.o geoid.o sbas.o preceph.o pntpos.o ephemeris.o options.o
 rnx2rtkp   : ppp.o ppp_ar.o rtcm.o rtcm2.o rtcm3.o rtcm3e.o ionex.o qzslex.o

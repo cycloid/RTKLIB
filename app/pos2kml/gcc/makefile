@@ -3,7 +3,17 @@
 BINDIR = /usr/local/bin
 SRC    = ../../../src
 CFLAGS = -Wall -O3 -ansi -pedantic -I$(SRC) -DTRACE
-LDLIBS  = -lm -lrt
+
+# Set OS-specific compile and link options
+
+OS := $(shell uname -s)
+ifeq (Darwin, $(findstring Darwin,$(OS)))
+  # echo "Building for Darwin"
+  LDLIBS = 
+else ifeq (Linux, $(findstring Linux,$(OS)))
+  # echo "Building for Linux"
+  LDLIBS = -lm -lrt
+endif
 
 pos2kml    : pos2kml.o convkml.o solution.o geoid.o rtkcmn.o preceph.o
 
