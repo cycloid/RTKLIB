@@ -626,7 +626,8 @@ static int readfile(file_t *file, unsigned char *buff, int nmax, char *msg)
 {
     struct timeval tv={0};
     fd_set rs;
-    unsigned int nr=0,t,tick;
+    int nr = 0;
+    unsigned int t,tick;
     size_t fpos;
     
     tracet(4,"readfile: fp=%d nmax=%d\n",file->fp,nmax);
