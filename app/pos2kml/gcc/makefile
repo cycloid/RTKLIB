@@ -8,10 +8,9 @@ CFLAGS = -Wall -O3 -ansi -pedantic -I$(SRC) -DTRACE
 
 OS := $(shell uname -s)
 ifeq (Darwin, $(findstring Darwin,$(OS)))
-  # echo "Building for Darwin"
   LDLIBS = 
 else ifeq (Linux, $(findstring Linux,$(OS)))
-  # echo "Building for Linux"
+  CFLAGS += -Wno-unused-but-set-variable
   LDLIBS = -lm -lrt
 endif
 

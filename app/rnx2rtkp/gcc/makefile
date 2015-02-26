@@ -19,6 +19,7 @@ ifeq (Darwin, $(findstring Darwin,$(OS)))
     LDLIBS =
   endif
 else ifeq (Linux, $(findstring Linux,$(OS)))
+  CFLAGS += -Wno-unused-but-set-variable
   ifeq (-DLAPACK, $(strip $(LINALG)))  # Linux with LAPACK
     LDLIBS = -lm -lrt -lpthread -llapack -lblas
   else ifeq (-DMKL, $(strip $(LINALG)))

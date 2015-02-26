@@ -14,6 +14,7 @@ OS := $(shell uname -s)
 ifeq (Darwin, $(findstring Darwin,$(OS)))
   LDLIBS = 
 else ifeq (Linux, $(findstring Linux,$(OS)))
+  CFLAGS += -Wno-unused-but-set-variable
   LDLIBS  = -lm -lrt -lpthread
 endif
 

@@ -15,10 +15,9 @@ CFLAGS = -O3 -ansi -pedantic -Wall $(INCLUDE) $(OPTIONS) -g
 
 OS := $(shell uname -s)
 ifeq (Darwin, $(findstring Darwin,$(OS)))
-  # echo "Building for Darwin/MacOS"
   LDLIBS = 
 else ifeq (Linux, $(findstring Linux,$(OS)))
-  # echo "Building for Linux"
+  CFLAGS += -Wno-unused-but-set-variable
   LDLIBS = -lm -lrt
 endif
 
