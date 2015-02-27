@@ -21,6 +21,8 @@ endif
 %.o : $(SRC)/%.c $(SRC)/rtklib.h
 	$(CC) -c $(CFLAGS) $<
 
+$(phony all): pos2kml
+
 pos2kml    : pos2kml.o convkml.o solution.o geoid.o rtkcmn.o preceph.o
 
 install:
