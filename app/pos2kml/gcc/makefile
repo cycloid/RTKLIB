@@ -8,33 +8,20 @@ CFLAGS = -Wall -O3 -ansi -pedantic -I$(SRC) -DTRACE
 
 OS := $(shell uname -s)
 ifeq (Darwin, $(findstring Darwin,$(OS)))
+  CC = clang
   LDLIBS = 
 else ifeq (Linux, $(findstring Linux,$(OS)))
   CFLAGS += -Wno-unused-but-set-variable
-  LDLIBS = -lm -lrt
+  LDLIBS  = -lm -lrt
 endif
 
+%.o : ../%.c $(SRC)/rtklib.h
+	$(CC) -c $(CFLAGS) $<
+
+%.o : $(SRC)/%.c $(SRC)/rtklib.h
+	$(CC) -c $(CFLAGS) $<
+
 pos2kml    : pos2kml.o convkml.o solution.o geoid.o rtkcmn.o preceph.o
-
-pos2kml.o  : ../pos2kml.c
-	$(CC) -c $(CFLAGS) ../pos2kml.c
-convkml.o  : $(SRC)/convkml.c
-	$(CC) -c $(CFLAGS) $(SRC)/convkml.c
-solution.o : $(SRC)/solution.c
-	$(CC) -c $(CFLAGS) $(SRC)/solution.c
-geoid.o    : $(SRC)/geoid.c
-	$(CC) -c $(CFLAGS) $(SRC)/geoid.c
-rtkcmn.o   : $(SRC)/rtkcmn.c
-	$(CC) -c $(CFLAGS) $(SRC)/rtkcmn.c
-preceph.o  : $(SRC)/preceph.c
-	$(CC) -c $(CFLAGS) $(SRC)/preceph.c
-
-pos2kml.o  : $(SRC)/rtklib.h
-convkml.o  : $(SRC)/rtklib.h
-solution.o : $(SRC)/rtklib.h
-geoid.o    : $(SRC)/rtklib.h
-rtkcmn.o   : $(SRC)/rtklib.h
-preceph.o  : $(SRC)/rtklib.h
 
 install:
 	cp pos2kml $(BINDIR)
